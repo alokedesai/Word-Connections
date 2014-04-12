@@ -6,32 +6,19 @@ from twython import Twython
 import unicodedata
 app = Flask(__name__)
 
-#since friday
-since2 = 454716221603475460
 
-twitter = Twython("Bj8QJnjWoPJZEm9Grk6Gw", "RWOa66BfOsE5xUXQvEJGyqE20p1hoaENbyEQypwOyMo", "33357585-OqIxndYV9Wmk0k0qCH3j32hxOZ7L2oKlAeXCeXQEz", "rwe1tmue1dzLOuCAAtbyYu1yQUfYd4lXcUMccRS4yDnpW")
-
-def score(w1, word):
-	tweets = twitter.search(q=word + ", " + w1 + "+exclude:retweets", count=100, locale="en", since_id=since2)["statuses"]
-	return len(tweets)
-
-def accept(reject_threshold, threshold, w1, words):
-	counter = 0
-	for word in words:
-		sc = score(w1, word)
-		if sc < reject_threshold:
-			return False
-		else:
-			counter += sc
-	return (counter/len(words) >= threshold)
 
 @app.route("/")
 def index():
-	return str(accept(5,25,"tennis", ["federer", "djokovic"]))
+	return render_template("index.html")
+@app.route("/test")
+def test():
+	return render_template("test.html")
+
+	
 if __name__ == '__main__':
     app.debug = True
     app.run(port=3333)
-
 
 '''
 # unicode normalization
