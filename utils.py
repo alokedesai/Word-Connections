@@ -4,6 +4,8 @@ def score(word1,word2):
 	return randint(0,5)
 	
 inputs = ["house","government","family"]
+def uni(x):
+        return unicodedata.normalize('NFKD',x).encode('ascii','ignore')
 
 def categoryScore(wordToCheck, category):
 	total = 0

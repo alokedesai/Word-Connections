@@ -14,7 +14,7 @@ def index():
 
 @app.route('/addWord', methods=["GET"])
 def addWord():
-    inputs.append([request.args.get("word")]) 
+    inputs.append([uni(request.args.get("word"))]) 
     print inputs
     return json.dumps({"word": request.args.get("word")})
 
