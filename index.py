@@ -9,6 +9,9 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route('/echo', methods=["GET"])
+def echo():
+    return json.dumps({"echoed": request.args.get("echo")})
 
 if __name__ == '__main__':
     app.debug = True
