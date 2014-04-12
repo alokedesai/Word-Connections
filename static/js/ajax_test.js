@@ -1,6 +1,9 @@
-function addWord(echo) {
-    $.ajax("/addWord?word="+echo, {"dataType": "json", "type": "GET", "success": function (data) {
-	
+
+function addWord(word) {
+    var url = "/addWord?word="+word+"&categories="+encodeURIComponent(JSON.stringify(categories));
+    $.ajax(url, {"dataType": "json", "type": "GET", "success": function (data) {
+        categories=data;	
+	update(categories);
         console.log(data);
     }});
 }

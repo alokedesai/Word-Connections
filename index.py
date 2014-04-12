@@ -6,7 +6,6 @@ import json
 
 app = Flask(__name__)
 
-inputs = []
 
 @app.route("/")
 def index():
@@ -14,6 +13,7 @@ def index():
 
 @app.route('/addWord', methods=["GET"])
 def addWord():
+    inputs = list(json.loads(uni(request.args.get("categories"))))
     w = uni(request.args.get("word"))
     i = compareToCategory(w, inputs, 2) 
     if i==-1:

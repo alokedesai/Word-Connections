@@ -10,25 +10,31 @@
     </head>
 
     <body>
-
 	<input type="text" name="word">
-	<ul>
-
-	</ul>
-
+	<div id="stuff">
+	</div>
     </body>
     <script>
-	categories={};	
+	categories=[];	
 	function create(text){
 	        return "<li>"+text+"</li>";
 	}	
+	function update(){
+		$('#stuff').empty();
+		for(var i = 0; i < categories.length; i++){
+			$("#stuff").append("<ul>");			
+			for(var j = 0; j < categories[i].length; j++){
+				$("#stuff").append(create(categories[i][j]));
+			}
+			$("#stuff").append("</ul>");
+		}
+	}
 
         $(document).ready( 
 		$("input").keypress(function(e){
 			var input =$("input");
 			if(e.which == 13){
 				addWord(input.val());
-				$("ul").append(create(input.val()));
 				input.val("");
 			}
 		})
