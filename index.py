@@ -6,17 +6,18 @@ import json
 
 app = Flask(__name__)
 
-matrix = [[[0]]]
+matrix = []
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route('/addWord', methods=["GET"])
-def addWord():
+def addWord(): 
+    global matrix
     inputs = list(json.loads(uni(request.args.get("categories"))))
     if inputs==[]:
-	    matrix = [[[0]]]
+	    matrix = []
     w = uni(request.args.get("word"))
     i = compareToCategory(w, inputs, 2, matrix) 
     print matrix
