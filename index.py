@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, abort, jsonify
-from utils import uni,categoryScore,compareToCategory,score
+from utils import uni,compareToCategory
 import datetime
 import random
 import json
