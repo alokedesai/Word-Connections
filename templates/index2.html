@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+	<title>Word Combinator</title>
+		<link rel="stylesheet" type="text/css" href="static/css/fancyInput.css">
+
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,100,700italic' rel='stylesheet' type='text/css'>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script type="text/javascript" src="static/js/fancyInput.js"></script>
+	<link rel="stylesheet" type="text/css" href="static/css/main.css">
+</head>
+<body>
+<h2 id ="header"><span id="bold">Word</span>Combinator</h2>
+<script>
+
+
+var w = 1280,
+    h = 275,
+    node,
+    link,
+    root;
+
+var force = d3.layout.force()
+    .on("tick", tick)
+    .charge(function(d) { return d._children ? -d.size / 100 : -30; })
+    .linkDistance(function(d) { return d.target._children ? 80 : 30; })
+    .size([w, h - 160]);
+
+var vis = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
+
+d3.json("static/graph.json", function(json) {
+  root = json;
+  root.fixed = true;
+  root.x = w / 2;
+  root.y = h / 2;
+  update();
+
+  // click on all children
+  // click(root);
+});
+
+function update() {
+  var nodes = flatten(root),
+      links = d3.layout.tree().links(nodes);
+
+  // Restart the force layout.
+  force
+      .nodes(nodes)
+      .links(links)
+      .start();
+
+  // Update the links…
+  link = vis.selectAll("line.link")
+      .data(links, function(d) { return d.target.id; });
+
+  // Enter any new links.
+  link.enter().insert("svg:line", ".node")
+      .attr("class", "link")
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  // Exit any old links.
+  link.exit().remove();
+
+  // Update the nodes…
+  node = vis.selectAll("circle.node")
+      .data(nodes, function(d) { return d.id; })
+      .style("fill", color);
+
+  node.transition()
+      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; });
+
+  // Enter any new nodes.
+  node.enter().append("svg:circle")
+      .attr("class", "node")
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; })
+      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; })
+      .style("fill", color)
+      .on("click", click)
+      .call(force.drag);
+
+  // Exit any old nodes.
+  node.exit().remove();
+}
+
+function tick() {
+  link.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  node.attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
+}
+
+// Color leaf nodes orange, and packages white or blue.
+function color(d) {
+  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+}
+
+// Toggle children on click.
+function click(d) {
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  update();
+}
+
+// Returns a list of all nodes under the root.
+function flatten(root) {
+  var nodes = [], i = 0;
+
+  function recurse(node) {
+    if (node.children) node.size = node.children.reduce(function(p, v) { return p + recurse(v); }, 0);
+    if (!node.id) node.id = ++i;
+    nodes.push(node);
+    return node.size;
+  }
+
+  root.size = recurse(root);
+  return nodes;
+}
+
+function clickChildren(root) {
+
+}
+</script>
+
+<div id="container">
+    <div id="input"></div>
+    <input type="text" id="hiddenInput">
+</div> 
+
+<script>
+    var input;
+var cursor;
+var hiddenInput;
+var content = [];
+var lastContent = "", targetContent = "";
+var inputLock = false;
+var autoWriteTimer;
+
+var isMobile, isIE;
+
+window.onload = function() {
+
+    isMobile = navigator && navigator.platform && navigator.platform.match(/^(iPad|iPod|iPhone)$/);
+
+    isIE = (navigator.appName == 'Microsoft Internet Explorer');
+
+    input = document.getElementById('input');
+
+    hiddenInput = document.getElementById('hiddenInput');
+    hiddenInput.focus();
+
+    cursor = document.createElement('cursor');
+    cursor.setAttribute('class', 'blink');
+    cursor.innerHTML = "|";
+
+    if (!isMobile && !isIE) input.appendChild(cursor);
+
+    function refresh() {
+
+        inputLock = true;
+
+        if (targetContent.length - lastContent.length == 0) return;
+
+        var v = targetContent.substring(0, lastContent.length + 1);
+
+        content = [];
+
+        var blinkPadding = false;
+
+        for (var i = 0; i < v.length; i++) {
+            var l = v.charAt(i);
+
+            var d = document.createElement('div');
+            d.setAttribute('class', 'letterContainer');
+
+            var d2 = document.createElement('div');
+
+            var animClass = (i % 2 == 0) ? 'letterAnimTop' : 'letterAnimBottom';
+
+            var letterClass = (lastContent.charAt(i) == l) ? 'letterStatic' : animClass;
+
+            if (letterClass != 'letterStatic') blinkPadding = true;
+
+            d2.setAttribute('class', letterClass);
+
+            d.appendChild(d2);
+
+            d2.innerHTML = l;
+            content.push(d);
+        }
+
+        input.innerHTML = '';
+
+        for (var i = 0; i < content.length; i++) {
+            input.appendChild(content[i]);
+        }
+
+        cursor.style.paddingLeft = (blinkPadding) ? '22px' : '0';
+
+        if (!isMobile && !isIE) input.appendChild(cursor);
+
+        if (targetContent.length - lastContent.length > 1) setTimeout(refresh, 150);
+        else inputLock = false;
+
+        lastContent = v;
+    }
+
+    if (document.addEventListener) {
+
+        document.addEventListener('touchstart', function(e) {
+            clearInterval(autoWriteTimer);
+            targetContent = lastContent;
+        }, false);
+
+        document.addEventListener('click', function(e) {
+            clearInterval(autoWriteTimer);
+            targetContent = lastContent;
+            hiddenInput.focus();
+        }, false);
+
+        if (!isIE) {
+            // Input event is buggy on IE, so don't bother
+            // (http://msdn.microsoft.com/en-us/library/gg592978(v=vs.85).aspx#feedback)
+            // We will use a timer instead (below)
+            hiddenInput.addEventListener('input', function(e) {
+                e.preventDefault();
+                targetContent = hiddenInput.value;
+                if (!inputLock) refresh();
+
+            }, false);
+        } else {
+            setInterval(function() {
+                targetContent = hiddenInput.value;
+
+                if (targetContent != lastContent && !inputLock) refresh();
+            }, 100);
+        }
+
+    }
+
+    hiddenInput.value = "";
+
+    autoWriteTimer = setTimeout(function() {
+        if (lastContent != "") return;
+        targetContent = "type something...";
+        refresh();
+    }, 2000);
+}
+
+</script>
+</body>
