@@ -5,13 +5,17 @@ import json
 
 app = Flask(__name__)
 
+inputs = []
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route('/echo', methods=["GET"])
-def echo():
-    return json.dumps({"echoed": request.args.get("echo")})
+@app.route('/addWord', methods=["GET"])
+def addWord():
+    inputs.append(request.args.get("word")) 
+    print inputs
+    return json.dumps({"word": request.args.get("word")})
 
 if __name__ == '__main__':
     app.debug = True

@@ -1,6 +1,6 @@
-function testing_ajax(echo) {
-    $.ajax("/echo?echo="+echo, {"dataType": "json", "type": "GET", "success": function (data) {
-        console.log(data["echoed"]);
+function addWord(echo) {
+    $.ajax("/addWord?word="+echo, {"dataType": "json", "type": "GET", "success": function (data) {
+        console.log(data["word"]);
     }});
 }
 

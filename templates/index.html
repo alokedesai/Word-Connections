@@ -11,7 +11,6 @@
 
     <body>
 
-    <input type="button" onclick="testing_ajax('test123')" value="test">
 	<input type="text" name="word">
 
     </body>
@@ -25,6 +24,7 @@
 		$("input").keypress(function(e){
 			var input =$("input");
 			if(e.which == 13){
+				addWord(input.val());
 				$("body").append(create(input.val()));
 				input.val("");
 			}
