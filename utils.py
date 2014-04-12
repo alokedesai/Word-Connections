@@ -1,4 +1,5 @@
 from random import randint
+import unicodedata
 
 def score(word1,word2):
 	return randint(0,5)
@@ -21,12 +22,12 @@ def compareToCategory(wordToCheck, currentWords, baseLine):
      maxScore = 0
      maxCategory = 0 
      count = 0
-     for word in currentWords:
-	count += 1
-        currScore = categoryScore(wordToCheck, category)
+     for words in currentWords:
+        currScore = categoryScore(wordToCheck, words)
         if currScore > maxScore:
           maxScore = currScore
           maxCategory = count 
+	count += 1
      if maxScore < baseLine:
         return -1 
      else: 

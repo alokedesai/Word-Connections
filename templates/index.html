@@ -12,12 +12,15 @@
     <body>
 
 	<input type="text" name="word">
+	<ul>
+
+	</ul>
 
     </body>
     <script>
-	
+	categories={};	
 	function create(text){
-	        return "<p>"+text+"</p>";
+	        return "<li>"+text+"</li>";
 	}	
 
         $(document).ready( 
@@ -25,7 +28,7 @@
 			var input =$("input");
 			if(e.which == 13){
 				addWord(input.val());
-				$("body").append(create(input.val()));
+				$("ul").append(create(input.val()));
 				input.val("");
 			}
 		})
