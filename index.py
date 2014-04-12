@@ -10,7 +10,7 @@ matrix = []
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index3.html")
 
 @app.route('/addWord', methods=["GET"])
 def addWord(): 
@@ -19,8 +19,7 @@ def addWord():
     if inputs==[]:
 	    matrix = []
     w = uni(request.args.get("word"))
-    i = compareToCategory(w, inputs, 2, matrix) 
-    print matrix
+    i = compareToCategory(w, inputs, 20, matrix) 
     if i==-1:
 	    inputs.append([w])
     else:

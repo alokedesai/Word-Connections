@@ -12,9 +12,8 @@ matrix = [[[]]]
 global templist
 templist = []
 def score(w1, word):
-	#tweets = twitter.search(q=word + ", " + w1 + "+exclude:retweets", count=100, locale="en", since_id=since2)["statuses"]
-	# return len(tweets)
-	return randint(0,5)
+	tweets = twitter.search(q=word + ", " + w1 + "+exclude:retweets", count=100, locale="en", since_id=since2)["statuses"]
+	return len(tweets)
 		
 def uni(x):
         return unicodedata.normalize('NFKD',x).encode('ascii','ignore')

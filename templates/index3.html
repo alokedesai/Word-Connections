@@ -9,6 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="static/css/main.css">
 <script type="text/javascript" src="static/js/arbor.js"></script>
 <script type="text/javascript" src="static/js/arbor-tween.js"></script>
+    <script src="{{ url_for('static',filename='js/ajax_test.js') }}"></script>
 <!-- YOLO -->
 <script type="text/javascript" src="static/js/arbor-graphics.js"></script>
 </head>
@@ -17,11 +18,49 @@
 <canvas id="sitemap" width="800" height="400"></canvas>
 
 <script type="text/javascript">
+
+	categories=[];	
+	function create(text){
+	        return "<li>"+text+"</li>";
+	}	
+	function update(){
+		$('#stuff').empty();
+		for(var i = 0; i < categories.length; i++){
+			$("#stuff").append("<ul>");			
+			for(var j = 0; j < categories[i].length; j++){
+				$("#stuff").append(create(categories[i][j]));
+			}
+			$("#stuff").append("</ul>");
+		}
+	}
+	function updateGraph(){
+		theUI.nodes["WC"] = {color:"#FF5600",shape:"dot",alpha:1}
+		theUI.edges["WC"] = {}
+		for(var i = 0; i < categories.length; i++){
+			var a = categories[i][0]
+			theUI.nodes[a]={color:"#172980",shape:"dot",alpha:1};
+			theUI.edges["WC"][a] = {length:.8}
+			theUI.edges[categories[i][0]]={}
+			for(var j = 1; j < categories[i].length; j++){
+				theUI.nodes[categories[i][j]]={color:"#007633", alpha:.8};
+				theUI.edges[categories[i][0]][categories[i][j]]={}
+			}
+
+		}
+		sys.parameters({stiffness:900,repulsion:1000, gravity:true, dt:0.005})
+		sys.graft(theUI);
+	}
 //
 // site.js
 //
 // the arbor.js website
-//
+var CLR = {
+      branch:"#b2b19d",
+      code:"orange",
+      doc:"#922E00",
+      demo:"#a7af00"
+    }
+
 var sys;
 var theUI;
 (function($){
@@ -334,7 +373,6 @@ var theUI;
             $(this).hide()
             $(that).trigger({type:'mode', mode:'visible', dt:dt})
           })
-          document.title = "arbor.js"
           break
           
           case 'introduction':
@@ -346,7 +384,6 @@ var theUI;
                     
           $('#docs').find(">div").hide()
           $('#docs').find('#'+_path).show()
-          document.title = "arbor.js » " + _path
           break
         }
         
@@ -354,19 +391,20 @@ var theUI;
     }
     return that
   }
-  
-  $(document).ready(function(){
-    var CLR = {
-      branch:"#b2b19d",
-      code:"orange",
-      doc:"#922E00",
-      demo:"#a7af00"
-    }
+    $(document).ready(function(){
+		$("input").keypress(function(e){
+			var input =$("input");
+			if(e.which == 13){
+				addWord(input.val());
+				$(".letterContainer").remove();
+				input.val("");
+			}
+		})
+    
 
     theUI = {
-      nodes:{"arbor.js":{color:"orange", shape:"dot", alpha:1}, 
+      nodes:{ 
       
-            demos:{color:CLR.branch, shape:"dot", alpha:0}, 
              // halfviz:{color:CLR.demo, alpha:0, link:'/halfviz'},
              // atlas:{color:CLR.demo, alpha:0, link:'/atlas'},
              // echolalia:{color:CLR.demo, alpha:0, link:'/echolalia'},
@@ -381,16 +419,11 @@ var theUI;
              // ".tar.gz":{color:CLR.code, alpha:0, link:'/js/dist/arbor-v0.92.tar.gz'}
             },
       edges:{
-         "arbor.js":{
-          demos:{},
         //   docs:{length:.8},
         //   code:{length:.8}
-         },
-         demos:{
           // halfviz:{},
         //        atlas:{},
         //        echolalia:{}
-         },
         // docs:{reference:{},
         //       introduction:{}
         // },
@@ -422,6 +455,7 @@ var theUI;
 </div> 
 
 <script>
+
     var input;
 var cursor;
 var hiddenInput;
@@ -431,6 +465,8 @@ var inputLock = false;
 var autoWriteTimer;
 
 var isMobile, isIE;
+
+        
 
 window.onload = function() {
 
