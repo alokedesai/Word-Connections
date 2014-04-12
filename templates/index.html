@@ -3,11 +3,25 @@
 <html>
     
     <head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <title>Stuff</title>
     </head>
 
     <body>
 
+	<input type="text" name="word">
+
     </body>
+    <script>
+        $(document).ready( 
+		$("input").keypress(function(e){
+			var input =$("input");
+			if(e.which == 13){
+				$("body").append("<p>"+input.val()+"</p>");
+				input.val("");
+			}
+		})
+	);
+    </script>
 
 </html>
