@@ -13,11 +13,16 @@
 
     </body>
     <script>
+	
+	function create(text){
+	        return "<p>"+text+"</p>";
+	}	
+
         $(document).ready( 
 		$("input").keypress(function(e){
 			var input =$("input");
 			if(e.which == 13){
-				$("body").append("<p>"+input.val()+"</p>");
+				$("body").append(create(input.val()));
 				input.val("");
 			}
 		})
