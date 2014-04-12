@@ -6,7 +6,7 @@ import datetime
 #since friday
 since2 = 454716221603475460
 
-twitter = Twython("Bj8QJnjWoPJZEm9Grk6Gw", "RWOa66BfOsE5xUXQvEJGyqE20p1hoaENbyEQypwOyMo", "33357585-OqIxndYV9Wmk0k0qCH3j32hxOZ7L2oKlAeXCeXQEz", "rwe1tmue1dzLOuCAAtbyYu1yQUfYd4lXcUMccRS4yDnpW")
+twitter = Twython("No4ACFMdevlokYGnvFNDZ8h3f", "POhH2Fw7XAcAmErsZGQbk8gC6WTwy5IXUo8X26tT28aYjThsJn", "2439465265-yLHjFqNq4s7SjkRkLGIpPh61VXuMR0au1dgPfCw", "uJRAnX98ugTwFqbBx4utkgWZgKiXf5ZXYwkM1QbORGVql")
 
 matrix = [[[]]]
 global templist
