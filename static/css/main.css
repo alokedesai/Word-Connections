@@ -1,3 +1,42 @@
-.yay {
-    /* boilerplate */
+
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed);
+/*D3 Styles*/
+.node circle {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+line.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+#header{
+	font-family: 'Roboto', sans-serif;
+	font-weight: 100;
+	font-size: 50px;
+	text-align: center;
+	color: #fff;
+}
+#bold{
+	font-weight: 400;
+}
+body {
+	background-color: #000000;
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 40px;
+	color: #ffffff;
+}
+.word{
+	color: #000;
+}
+#container{
+	text-align: center;
 }
