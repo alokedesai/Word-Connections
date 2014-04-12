@@ -13,254 +13,114 @@
 <body>
 <h2 id ="header"><span id="bold">Word</span>Combinator</h2>
 <script>
+function myGraph(el) {
 
-
-
-var w = 1280,
-    h = 275,
-    node,
-    link,
-    root;
-
-var force = d3.layout.force()
-    .on("tick", tick)
-    .charge(function(d) { return d._children ? -d.size / 100 : -30; })
-    .linkDistance(function(d) { return d.target._children ? 80 : 30; })
-    .size([w, h - 160]);
-
-var vis = d3.select("body").append("svg:svg")
-    .attr("width", w)
-    .attr("height", h);
-
-d3.json("static/graph.json", function(json) {
-  root = json;
-  root.fixed = true;
-  root.x = w / 2;
-  root.y = h / 2;
-  update();
-
-  // click on all children
-  // click(root);
-});
-
-function update() {
-  var nodes = flatten(root),
-      links = d3.layout.tree().links(nodes);
-
-  // Restart the force layout.
-  force
-      .nodes(nodes)
-      .links(links)
-      .start();
-
-  // Update the links…
-  link = vis.selectAll("line.link")
-      .data(links, function(d) { return d.target.id; });
-
-  // Enter any new links.
-  link.enter().insert("svg:line", ".node")
-      .attr("class", "link")
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-
-  // Exit any old links.
-  link.exit().remove();
-
-  // Update the nodes…
-  node = vis.selectAll("circle.node")
-      .data(nodes, function(d) { return d.id; })
-      .style("fill", color);
-
-  node.transition()
-      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; });
-
-  // Enter any new nodes.
-  node.enter().append("svg:circle")
-      .attr("class", "node")
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; })
-      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; })
-      .style("fill", color)
-      .on("click", click)
-      .call(force.drag);
-
-  // Exit any old nodes.
-  node.exit().remove();
-}
-
-function tick() {
-  link.attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-
-  node.attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
-}
-
-// Color leaf nodes orange, and packages white or blue.
-function color(d) {
-  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-}
-
-// Toggle children on click.
-function click(d) {
-  if (d.children) {
-    d._children = d.children;
-    d.children = null;
-  } else {
-    d.children = d._children;
-    d._children = null;
-  }
-  update();
-}
-
-// Returns a list of all nodes under the root.
-function flatten(root) {
-  var nodes = [], i = 0;
-
-  function recurse(node) {
-    if (node.children) node.size = node.children.reduce(function(p, v) { return p + recurse(v); }, 0);
-    if (!node.id) node.id = ++i;
-    nodes.push(node);
-    return node.size;
-  }
-
-  root.size = recurse(root);
-  return nodes;
-}
-
-function clickChildren(root) {
-
-}
-</script>
-
-<div id="container">
-    <div id="input"></div>
-    <input type="text" id="hiddenInput">
-</div> 
-
-<script>
-    var input;
-var cursor;
-var hiddenInput;
-var content = [];
-var lastContent = "", targetContent = "";
-var inputLock = false;
-var autoWriteTimer;
-
-var isMobile, isIE;
-
-window.onload = function() {
-
-    isMobile = navigator && navigator.platform && navigator.platform.match(/^(iPad|iPod|iPhone)$/);
-
-    isIE = (navigator.appName == 'Microsoft Internet Explorer');
-
-    input = document.getElementById('input');
-
-    hiddenInput = document.getElementById('hiddenInput');
-    hiddenInput.focus();
-
-    cursor = document.createElement('cursor');
-    cursor.setAttribute('class', 'blink');
-    cursor.innerHTML = "|";
-
-    if (!isMobile && !isIE) input.appendChild(cursor);
-
-    function refresh() {
-
-        inputLock = true;
-
-        if (targetContent.length - lastContent.length == 0) return;
-
-        var v = targetContent.substring(0, lastContent.length + 1);
-
-        content = [];
-
-        var blinkPadding = false;
-
-        for (var i = 0; i < v.length; i++) {
-            var l = v.charAt(i);
-
-            var d = document.createElement('div');
-            d.setAttribute('class', 'letterContainer');
-
-            var d2 = document.createElement('div');
-
-            var animClass = (i % 2 == 0) ? 'letterAnimTop' : 'letterAnimBottom';
-
-            var letterClass = (lastContent.charAt(i) == l) ? 'letterStatic' : animClass;
-
-            if (letterClass != 'letterStatic') blinkPadding = true;
-
-            d2.setAttribute('class', letterClass);
-
-            d.appendChild(d2);
-
-            d2.innerHTML = l;
-            content.push(d);
-        }
-
-        input.innerHTML = '';
-
-        for (var i = 0; i < content.length; i++) {
-            input.appendChild(content[i]);
-        }
-
-        cursor.style.paddingLeft = (blinkPadding) ? '22px' : '0';
-
-        if (!isMobile && !isIE) input.appendChild(cursor);
-
-        if (targetContent.length - lastContent.length > 1) setTimeout(refresh, 150);
-        else inputLock = false;
-
-        lastContent = v;
+    // Add and remove elements on the graph object
+    this.addNode = function (id) {
+        nodes.push({"id":id});
+        update();
     }
 
-    if (document.addEventListener) {
-
-        document.addEventListener('touchstart', function(e) {
-            clearInterval(autoWriteTimer);
-            targetContent = lastContent;
-        }, false);
-
-        document.addEventListener('click', function(e) {
-            clearInterval(autoWriteTimer);
-            targetContent = lastContent;
-            hiddenInput.focus();
-        }, false);
-
-        if (!isIE) {
-            // Input event is buggy on IE, so don't bother
-            // (http://msdn.microsoft.com/en-us/library/gg592978(v=vs.85).aspx#feedback)
-            // We will use a timer instead (below)
-            hiddenInput.addEventListener('input', function(e) {
-                e.preventDefault();
-                targetContent = hiddenInput.value;
-                if (!inputLock) refresh();
-
-            }, false);
-        } else {
-            setInterval(function() {
-                targetContent = hiddenInput.value;
-
-                if (targetContent != lastContent && !inputLock) refresh();
-            }, 100);
+    this.removeNode = function (id) {
+        var i = 0;
+        var n = findNode(id);
+        while (i < links.length) {
+            if ((links[i]['source'] == n)||(links[i]['target'] == n)) links.splice(i,1);
+            else i++;
         }
-
+        nodes.splice(findNodeIndex(id),1);
+        update();
     }
 
-    hiddenInput.value = "";
+    this.addLink = function (source, target) {
+        links.push({"source":findNode(source),"target":findNode(target)});
+        update();
+    }
 
-    autoWriteTimer = setTimeout(function() {
-        if (lastContent != "") return;
-        targetContent = "type something...";
-        refresh();
-    }, 2000);
+    var findNode = function(id) {
+        for (var i in nodes) {if (nodes[i]["id"] === id) return nodes[i]};
+    }
+
+    var findNodeIndex = function(id) {
+        for (var i in nodes) {if (nodes[i]["id"] === id) return i};
+    }
+
+    // set up the D3 visualisation in the specified element
+    var w = $(el).innerWidth(),
+        h = $(el).innerHeight();
+
+    var vis = this.vis = d3.select(el).append("svg:svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    var force = d3.layout.force()
+        .gravity(.05)
+        .distance(100)
+        .charge(-100)
+        .size([w, h]);
+
+    var nodes = force.nodes(),
+        links = force.links();
+
+    var update = function () {
+
+        var link = vis.selectAll("line.link")
+            .data(links, function(d) { return d.source.id + "-" + d.target.id; });
+
+        link.enter().insert("line")
+            .attr("class", "link");
+
+        link.exit().remove();
+
+        var node = vis.selectAll("g.node")
+            .data(nodes, function(d) { return d.id;});
+
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+
+        nodeEnter.append("image")
+            .attr("class", "circle")
+            .attr("xlink:href", "https://d3nwyuy0nl342s.cloudfront.net/images/icons/public.png")
+            .attr("x", "-8px")
+            .attr("y", "-8px")
+            .attr("width", "16px")
+            .attr("height", "16px");
+
+        nodeEnter.append("text")
+            .attr("class", "nodetext")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(function(d) {return d.id});
+
+        node.exit().remove();
+
+        force.on("tick", function() {
+          link.attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+
+          node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        });
+
+        // Restart the force layout.
+        force.start();
+    }
+
+    // Make it all go
+    update();
 }
+
+graph = new myGraph("#graph");
+
+// You can do this from the console as much as you like...
+graph.addNode("Cause");
+graph.addNode("Effect");
+graph.addLink("Cause", "Effect");
+graph.addNode("A");
+graph.addNode("B");
+graph.addLink("A", "B");
 
 </script>
 </body>
