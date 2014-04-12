@@ -13,7 +13,6 @@ def get_image_url(q):
     request = urllib2.Request(url, None, {'Referer': 'testing'})
     response = urllib2.urlopen(request)
 
-    # Get results using JSON
     results = json.load(response)
 
     return results['responseData']['results'][0]['unescapedUrl']
